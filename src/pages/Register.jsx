@@ -33,11 +33,12 @@ const Register = () => {
         body: JSON.stringify(formData),
       });
       if (!response.ok) {
-        throw new Error(`Erreur ${response.status}, ${response.message}`);
+        const data = await response.json()
+        console.log(data)
+        throw new Error(`Erreur ${response.status},${data.message}`)
       }
       console.log("Form submitted:", formData);
       navigate("/connexion");
-
     } catch (err) {
       setError("Erreur lors de l'inscription");
       console.error(err)
@@ -45,6 +46,7 @@ const Register = () => {
       setLoading(false);
     }
   };
+
   // Handle signup logic here
   // Don't forget to handle errors, both for yourself (dev) and for the client (via a Bootstrap Alert)
   // Redirect to Login on success
