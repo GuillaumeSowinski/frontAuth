@@ -1,11 +1,16 @@
 import { useState } from "react";
-import { Form, Button, Container, Card, Row, Col } from "react-bootstrap";
+import { Form, Button, Container, Card, Row, Col, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -14,8 +19,35 @@ const LoginPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch("https://offers-api.digistos.com/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json()
+      console.log(data)
+      if (!response.ok) {
+        throw new Error(`Erreur ${response.status} ${data.error}`)
+      }
+      navigate("/offres/professionnelles");
+    } catch (err) {
+      if (data.error === "Unauthorized") {
+        setError("Votre identifiant ou mot de passe est incorrect.")
+        console.error(err)
+      }
+      setError("Erreur lors du login")
+      console.error(err)
+    } finally {
+      setLoading(false);
+    }
     // Handle login logic here
     // Don't forget to handle errors, both for yourself (dev) and for the client (via a Bootstrap Alert):
     //   - Show an error if credentials are invalid
@@ -29,6 +61,7 @@ const LoginPage = () => {
       <Row className="w-100 justify-content-center">
         <Col xs={12} sm={8} md={6} lg={4}>
           <Card className="p-4 shadow-lg">
+            {error && <Alert variant="danger">{error}</Alert>}
             <h1 className="text-center mb-4">Se connecter</h1>
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="loginEmail">
@@ -54,7 +87,7 @@ const LoginPage = () => {
               </Form.Group>
 
               <Button variant="primary" type="submit" className="w-100">
-                Se connecter
+                {loading ? "Chargement..." : "Se connecter"}
               </Button>
             </Form>
           </Card>
