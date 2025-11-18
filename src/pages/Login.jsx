@@ -35,16 +35,18 @@ const LoginPage = () => {
       const data = await response.json()
       console.log(data)
       if (!response.ok) {
-        throw new Error(`Erreur ${response.status} ${data.error}`)
+        const customError = new Error(data.error || `Error happened`);
+        customError.status = response.status;
+        throw customError;
       }
       navigate("/offres/professionnelles");
     } catch (err) {
-      if (data.error === "Unauthorized") {
-        setError("Votre identifiant ou mot de passe est incorrect.")
-        console.error(err)
+      if (err.status === 401) {
+        setError("Votre identifiant ou mot de passe est incorrect.");
+      } else {
+        setError("Erreur lors du login")
       }
-      setError("Erreur lors du login")
-      console.error(err)
+      console.error(`${err.message}, (HTTP ${err.status})`)
     } finally {
       setLoading(false);
     }
