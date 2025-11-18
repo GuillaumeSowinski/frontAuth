@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Button, Container, Card, Row, Col } from "react-bootstrap";
+import { Form, Button, Container, Card, Row, Col, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router";
 
 const Register = () => {
@@ -33,14 +33,14 @@ const Register = () => {
         body: JSON.stringify(formData),
       });
       if (!response.ok) {
-        throw new Error(`Erreur ${response.status}`);
-      } else {
-        console.log("Form submitted:", formData);
-        navigate("/connexion");
+        throw new Error(`Erreur ${response.status}, ${response.message}`);
       }
+      console.log("Form submitted:", formData);
+      navigate("/connexion");
+
     } catch (err) {
       setError("Erreur lors de l'inscription");
-      console.log(err)
+      console.error(err)
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,9 @@ const Register = () => {
       <Row className="w-100 justify-content-center">
         <Col xs={12} sm={8} md={6} lg={4}>
           <Card className="p-4 shadow-lg">
+            {error && <Alert variant="danger">{error}</Alert>}
             <h1 className="text-center mb-4">Créer un compte</h1>
+
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="formEmail">
                 <Form.Label>Email</Form.Label>
