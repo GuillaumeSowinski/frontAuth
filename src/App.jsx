@@ -8,11 +8,13 @@ import OfferProList from "./pages/OfferProList.jsx";
 import OfferPublicList from "./pages/OfferPublicList.jsx";
 import Offer from "./pages/Offer.jsx";
 import Logout from "./components/Logout.jsx";
+import PrivateRoute from "./components/PrivateRoute.jsx";
 
 function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
+        <Route element={<PrivateRoute />} />
         <Route path="/" element={<Home />} />
         <Route path="/inscription" element={<Register />} />
         <Route path="/connexion" element={<Login />} />

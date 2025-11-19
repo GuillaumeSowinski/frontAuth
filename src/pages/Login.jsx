@@ -32,13 +32,24 @@ const LoginPage = () => {
         },
         body: JSON.stringify(formData),
       });
-      const data = await response.json()
-      console.log(data)
+      const datas = await response.json()
+      console.log(datas)
       if (!response.ok) {
-        const customError = new Error(data.error || `Error happened`);
+        const customError = new Error(datas.error || `Error happened`);
         customError.status = response.status;
         throw customError;
       }
+
+      localStorage.setItem(
+        "auth",
+        JSON.stringify({
+          token: datas.access_token,
+          expiresAt: new Date
+            (Date.now() + datas.expires_in * 1000
+            ).toISOString()
+        })
+      );
+
       navigate("/offres/professionnelles");
     } catch (err) {
       if (err.status === 401) {
