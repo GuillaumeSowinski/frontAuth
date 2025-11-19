@@ -16,13 +16,13 @@ const Offer = () => {
           {
             headers: {
               Accept: "application/json",
-              // Add Authorization token
+              Authorization: `Bearer ${JSON.parse(localStorage.getItem("auth"))?.token}`,
             },
           }
         );
 
         const { data: offers, message } = await response.json();
-        
+
         if (!response.ok) {
           throw { status: response.status, message: message };
         }
