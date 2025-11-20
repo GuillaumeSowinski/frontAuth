@@ -24,8 +24,6 @@ const Logout = () => {
             throw new Error(
               `HTTP error: ${datas.message} (status: ${response.status})`
             );
-        } else {
-          throw new Error("Missing Token");
         }
       } catch (error) {
         console.error(error.message);
